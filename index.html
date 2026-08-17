@@ -1,32 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-P4QZ7NKV1E"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-    
-      gtag('config', 'G-P4QZ7NKV1E');
-    </script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="icon.ico">
-    <title>Optics Simulator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <style>
-        html, body {
+        body {
             margin: 0;
+            border: 0;
             padding: 0;
             overflow: hidden;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
-        canvas {
-            display: block;
+
+        #mainCanvas {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #uiContainer1 {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 320px;
+            height: 110px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        label {
+            color: white;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        span {
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #add-object {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 60px;
+            height: 60px;
+            padding: 0px;
+            border-radius: 10px;
+            border: 0;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: 0.5s;
+        }
+
+        #add-object:hover {
+            background-color: #ffffff;
+        }
+
+        #delete-object {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 60px;
+            height: 60px;
+            padding: 0px;
+            border-radius: 10px;
+            border: 0;
+            background-color: rgba(180, 0, 0, 0.5);
+            transition: 0.5s;
+            color: white;
+        }
+
+        #delete-object:hover {
+            background-color: rgba(180, 0, 0, 1);
+        }
+
+        #overlay-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0);
+        }
+
+        #overlay {
+            display: flex;
+            flex-direction: column;
+            width: 400px;
+            height: 500px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin: 0;
+            border: 0;
+            padding: 15px;
+        }
+
+        .overlay-button {
+            font-size: 1.3rem;
+            height: 100%;
+            margin-bottom: 15px;
+            border: 0px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0);
+            color: white;
+            opacity: 0.6;
+            transition: 0.5s;
+        }
+
+        .overlay-button:hover {
+            opacity: 0.9;
+        }
+
+        .close-button {
+            background-color: blue;
+            margin-bottom: 0px;
+        }
+
+        .close-button:hover {
+            background-color: rgb(0, 0, 128);
         }
     </style>
 </head>
+
 <body>
+    <canvas id="mainCanvas"></canvas>
+
+    <div id="uiContainer1">
+        <div class="section">
+            <label id="fps">FPS: 60</p>
+        </div>
+        <div class="section">
+            <label for="rayDensity">Ray Density: </label>
+            <span id="rayDensityValue">0.2</span>
+            <input type="range" id="rayDensity" min="0.1" max="20" value="0.2" step="0.01">
+        </div>
+        <div class="section">
+            <label>Ray Thickness: </label>
+            <span id="rayThicknessValue">0.02</span>
+            <input type="range" id="rayThickness" min="0.01" max="1" value="0.02" step="0.01">
+        </div>
+        <div class="section">
+            <label>Max Bounces: </label>
+            <span id="maxBouncesValue">10</span>
+            <input type="range" id="maxBounces" min="0" max="50" value="10" step="1">
+        </div>
+    </div>
+
+    <button id="add-object" onclick="openOverlay()">+</button>
+
+    <div id="overlay-container">
+        <div id="overlay">
+            <button class="overlay-button" onclick="addRay()">Add Ray</button>
+            <button class="overlay-button" onclick="addBeam()">Add Beam</button>
+            <button class="overlay-button" onclick="addPointSource()">Add Point Source</button>
+            <button class="overlay-button" onclick="addPlaneMirror()">Add Plane Mirror</button>
+            <button class="overlay-button" onclick="addCurvedMirror()">Add Curved Mirror</button>
+            <button class="overlay-button close-button" onclick="closeOverlay()">Close</button>
+        </div>
+    </div>
+
+    <button id="delete-object" onclick="deleteSelected()">❌️</button>
+
+    <script src="ray.js"></script>
+    <script src="beam.js"></script>
+    <script src="pointSource.js"></script>
+    <script src="planeMirror.js"></script>
+    <script src="curvedMirror.js"></script>
+    <script src="scene.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>
