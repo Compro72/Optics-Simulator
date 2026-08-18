@@ -14,15 +14,15 @@ let mouseY = 0;
 let mouseDown = false;
 let dragging = false;
 
-let uiSize = 5;
+let uiSize = 10;
 let frameCount = 0;
 
 let isOverlayOpen = false;
 
 let selectedObject = null;
 
-let rayDensity = 0.2;
-let rayThickness = 0.02;
+let rayDensity = 20;
+let rayThickness = 1;
 let maxBounces = 10;
 
 const rayDensitySlider = document.getElementById('rayDensity');
@@ -53,24 +53,63 @@ maxBouncesSlider.addEventListener('input', function () {
     maxBounces = parseInt(this.value);
 });
 
-window.addEventListener('mousemove', (e) => {
-    mouseX = Math.max(-canvas.width / 2, Math.min(canvas.width / 2, e.clientX - (canvas.width / 2)));
-    mouseY = Math.max(-canvas.height / 2, Math.min(canvas.height / 2, (canvas.height / 2) - e.clientY));
+
+
+
+
+
+
+
+canvas.addEventListener("mousedown", (e) => {
+    mouseDown = true;
 });
 
-window.addEventListener('pointerdown', (e) => {
-    if (!isOverlayOpen) {
-        mouseDown = true;
-    }
-});
-
-window.addEventListener('pointerup', (e) => {
+canvas.addEventListener("mouseup", (e) => {
     mouseDown = false;
 });
+function updateMousePosition(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = (((clientX - rect.left) / rect.width) * canvas.width) - (canvas.width / 2);
+    mouseY = (canvas.height / 2) - (((clientY - rect.top) / rect.height) * canvas.height);
+}
+
+window.addEventListener("mousemove", (e) => {
+    updateMousePosition(e.clientX, e.clientY);
+});
+
+
+
+
+
+
+
+
+
+
+
+// window.addEventListener('mousemove', (e) => {
+//     mouseX = Math.max(-canvas.width / 2, Math.min(canvas.width / 2, e.clientX - (canvas.width / 2)));
+//     mouseY = Math.max(-canvas.height / 2, Math.min(canvas.height / 2, (canvas.height / 2) - e.clientY));
+// });
+
+// window.addEventListener('touchmove', (e) => {
+//     mouseX = Math.max(-canvas.width / 2, Math.min(canvas.width / 2, e.clientX - (canvas.width / 2)));
+//     mouseY = Math.max(-canvas.height / 2, Math.min(canvas.height / 2, (canvas.height / 2) - e.clientY));
+// });
+
+// window.addEventListener('pointerdown', (e) => {
+//     if (!isOverlayOpen) {
+//         mouseDown = true;
+//     }
+// });
+
+// window.addEventListener('pointerup', (e) => {
+//     mouseDown = false;
+// });
 
 window.addEventListener("resize", () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * window.devicePixelRatio;
+    canvas.height = window.innerHeight * window.devicePixelRatio;
 });
 
 function openOverlay() {
@@ -127,16 +166,10 @@ function deleteSelected() {
 }
 
 function initialize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * window.devicePixelRatio;
+    canvas.height = window.innerHeight * window.devicePixelRatio;
 
     scene = new Scene();
-
-    const num = 2000;
-    const start = 200;
-
-    scene.lights.push(new PointSource(0, 0));
-    scene.mirrors.push(new CurvedMirror(0, 300, 0, -300, 300, 0));
 
     requestAnimationFrame(loop);
 }
@@ -145,7 +178,7 @@ function loop(currentTime) {
     deltaTime = currentTime - prevTime;
     prevTime = currentTime;
 
-    if(!selectedObject) {
+    if (!selectedObject) {
         document.getElementById("delete-object").style.display = "none";
     } else {
         document.getElementById("delete-object").style.display = "flex";
