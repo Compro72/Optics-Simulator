@@ -53,59 +53,21 @@ maxBouncesSlider.addEventListener('input', function () {
     maxBounces = parseInt(this.value);
 });
 
-
-
-
-
-
-
-
-canvas.addEventListener("mousedown", (e) => {
-    mouseDown = true;
+window.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = (((e.clientX - rect.left) / rect.width) * canvas.width) - (canvas.width / 2);
+    mouseY = (canvas.height / 2) - (((e.clientY - rect.top) / rect.height) * canvas.height);
 });
 
-canvas.addEventListener("mouseup", (e) => {
+window.addEventListener('mousedown', (e) => {
+    if (!isOverlayOpen) {
+        mouseDown = true;
+    }
+});
+
+window.addEventListener('mouseup', (e) => {
     mouseDown = false;
 });
-function updateMousePosition(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    mouseX = (((clientX - rect.left) / rect.width) * canvas.width) - (canvas.width / 2);
-    mouseY = (canvas.height / 2) - (((clientY - rect.top) / rect.height) * canvas.height);
-}
-
-window.addEventListener("mousemove", (e) => {
-    updateMousePosition(e.clientX, e.clientY);
-});
-
-
-
-
-
-
-
-
-
-
-
-// window.addEventListener('mousemove', (e) => {
-//     mouseX = Math.max(-canvas.width / 2, Math.min(canvas.width / 2, e.clientX - (canvas.width / 2)));
-//     mouseY = Math.max(-canvas.height / 2, Math.min(canvas.height / 2, (canvas.height / 2) - e.clientY));
-// });
-
-// window.addEventListener('touchmove', (e) => {
-//     mouseX = Math.max(-canvas.width / 2, Math.min(canvas.width / 2, e.clientX - (canvas.width / 2)));
-//     mouseY = Math.max(-canvas.height / 2, Math.min(canvas.height / 2, (canvas.height / 2) - e.clientY));
-// });
-
-// window.addEventListener('pointerdown', (e) => {
-//     if (!isOverlayOpen) {
-//         mouseDown = true;
-//     }
-// });
-
-// window.addEventListener('pointerup', (e) => {
-//     mouseDown = false;
-// });
 
 window.addEventListener("resize", () => {
     canvas.width = window.innerWidth * window.devicePixelRatio;
@@ -170,6 +132,10 @@ function initialize() {
     canvas.height = window.innerHeight * window.devicePixelRatio;
 
     scene = new Scene();
+
+    addBeam();
+    scene.mirrors.push(new PlaneMirror(400, 200, 0, -200));
+
 
     requestAnimationFrame(loop);
 }
