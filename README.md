@@ -14,12 +14,12 @@ This project is a JavaScript implementation of a ray tracer which is able to int
 
 ## Features
 
-- **Interactive Cube:** A 2D and 3D interactive 2x2 Rubik's Cube built with CSS transforms.
-- **Random Scrambler:** A cube scrambler for testing the solver.
-- **Optimal Search:** A bi-directional breadth-first search implementation for finding the optimal solution.
-- **Pre-computed search Tree:** Pre-computed search tree for the first 7 moves from the solved state.
-- **Visual Move Guide:** Automatically generated images for an intuitive visual solution.
-- **Move-set Reduction:** Automatic orientation normalization to reduce the branching factor of the search from 18 to 9.
+- **Interactive Objects:** All objects have draggable points for positioning.
+- **Object :** A cube scrambler for testing the solver.
+- **:** A bi-directional breadth-first search implementation for finding the optimal solution.
+- **:** Pre-computed search tree for the first 7 moves from the solved state.
+- **:** Automatically generated images for an intuitive visual solution.
+- **:** Automatic orientation normalization to reduce the branching factor of the search from 18 to 9.
 
 ---
 
