@@ -15,28 +15,17 @@ This project is a JavaScript implementation of a ray tracer which is able to int
 ## Features
 
 - **Interactive Objects:** All objects have draggable points for positioning.
-- **Object :** A cube scrambler for testing the solver.
-- **:** A bi-directional breadth-first search implementation for finding the optimal solution.
-- **:** Pre-computed search tree for the first 7 moves from the solved state.
-- **:** Automatically generated images for an intuitive visual solution.
-- **:** Automatic orientation normalization to reduce the branching factor of the search from 18 to 9.
+- **Sources of Light:** Sources of light include a ray, beam and a point source.
+- **Types of Mirrors:** The types of mirrors available is the plane mirror and the curved mirror.
+- **Object Creation Menu:** Any of the objects can be created using the + menu.
+- **Object Deletion Button:** Any of the objects can be deleted from the scene using the X button.
+- **Scene Settings:** The global properties ray density, ray thickness and maximum ray bounces can be changed using sliders.
 
 ---
 
 ## Technical Description
 
-The move system used in this solver is **Half Turn Metric (HTM)**. HTM contains all faces $U$, $R$, $F$, $D$, $L$, $B$ and includes clockwise, counterclockwise, and double rotations. 
-
-On a 2x2 cube, half of these rotations are simply the same as turning the opposite face in the same direction. For example, making a clockwise $R$ turn or making a clockwise $L$ turn yields the same final combination, with the only difference being the orientation of the physical cube. 
-
-To solve this problem intuitively, this solver fixes the $U/R/F$ corner into a static position for the entire solve. By doing this, only $D$, $L$, $B$ moves are required. 
-
-For the solve algorithm itself:
-1. The solver contains a pre-computed search tree which holds all combinations **7 moves away from the solved state**. This tree is stored in `data.js`.
-2. At the first stage of the algorithm, the solver simply checks the pre-computed tree for the input cube. If found, it simply returns this solution.
-3. If the solution is not found in the first stage, the solver generates another tree with the root node being the input cube. 
-4. Since God's Number for a 2x2 cube is **11**, the solver only has to search **4 moves away** from the input cube to guarantee finding a state from the pre-computed search tree.
-5. Now, the solver iterates through each depth from the newly generated tree until a combination is found in the final depth (depth 7) of the pre-computed tree. Since there are two trees and nodes are processed in order of depth, this type of search algorithm is a **bi-directional breadth-first search**.
+The main architecture for managing the scene is an object oriented hierarchy system. The high level container class Scene, manages the light and mirror arrays containing all the scene objects. The objects include the class instances of PlaneMirror, CurvedMirror, Ray, Beam and PointSource. Beam and PointSource instances hold their own array of Ray instances. An update call, a render call and a renderUi call is passed through this hierarchy. For all the objects, the update call updates their drag points considering the user input. For exclusively light source objects, the mirrors array is passed into the update call for the rays to calculate their light path.
 
 ---
 
