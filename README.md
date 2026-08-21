@@ -25,18 +25,15 @@ This project is a JavaScript implementation of a ray tracer which is able to int
 
 ## Technical Description
 
-The main architecture for managing the scene is an object oriented hierarchy system. The high level container class Scene, manages the light and mirror arrays containing all the scene objects. The objects include the class instances of PlaneMirror, CurvedMirror, Ray, Beam and PointSource. Beam and PointSource instances hold their own array of Ray instances. An update call, a render call and a renderUi call is passed through this hierarchy. For all the objects, the update call updates their drag points considering the user input. For exclusively light source objects, the mirrors array is passed into the update call for the rays to calculate their light path.
+The main architecture for managing the scene is an object oriented hierarchy system. The high level container class Scene, manages the light and mirror arrays containing all the scene objects. The objects include the class instances of PlaneMirror, CurvedMirror, Ray, Beam and PointSource. Beam and PointSource instances hold their own array of Ray instances. An update call, a render call and a renderUi call is passed through this hierarchy. For all the objects, the update call updates their drag points considering the user input. For exclusively light source objects, the mirrors array is passed into the update call for the rays to calculate their light path. Each ray can calculate its path by first finding the closest mirror intersection, then using snell's law and vector math to reflect on the mirror's normal vector. This is repeated until the maximum bounce limit is reached or there are no intersections remaining. For the render call, a single yellow stroke is used to render all the light paths and another stroke is used to render all the white mirrors. For the renderUi call, a blue stroke and fill is used to render all the draggable points. By reducing the amount of stroke calls, the rendering becomes more performant.
 
 ---
 
 ## Future Improvements
 
-There are many major improvements that can be made to this search algorithm:
-
-* **Breath-First Search:** A queue data structure could be used to cleanly search the state space rather than generating a tree and then iteratively searching it.
-* **Heuristic Search:** One of the biggest improvements that drastically reduces the memory usage is to remove the pre-computed search tree and use admissible heuristics to guide the search. These heuristics could also be pre-computed but would be much smaller in size than an entire search tree.
-* **Uniform Scrambler:** The cube scrambler could be improved to be uniformly random across all possible states by mathematically rearranging the corner pieces instead of simply taking some amount of random moves.
-
+* **Added Features:** More objects could be added like a parabolic mirror or a floodlight. This would be easy to do because of this project's modular design.
+* **GPU Acceleration:** Moving rendering and ray tracing to WebGPU or WebGL shaders will improve performance and will allow more rays.
+* **UI Features:** Global properties like ray density and ray thickness could be displayed as the selected object's local properties. This would allow the user more freedom.
 ---
 
 ## How to Run Locally
